@@ -24,8 +24,8 @@
     watch instance_name (
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
-        .edit_btns,         // 2 bits INPUT : hours and minutes edit buttons
-        .current_time       // 17 bits OUTPUT : clock time in 24h format
+        .edit_btns(),       // 2 bits INPUT : hours (msb) and minutes (lsb) edit buttons (edges)
+        .current_time()     // 17 bits OUTPUT : clock time in 24h format
     );
 */
 ////////////////////////////////////////////
@@ -33,7 +33,7 @@
 module watch(
     input clk,                      // clock                           
     input reset,                    // reset                           
-    input [1:0] edit_btns,          // hours and minutes edit buttons 
+    input [1:0] edit_btns,          // hours (msb) and minutes (lsb) edit buttons (edges)
     output [16:0] current_time      // clock time in 24h format     
     );
 endmodule

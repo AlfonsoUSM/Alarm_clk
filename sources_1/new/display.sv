@@ -41,9 +41,9 @@ module display(
     input [16:0] disp_time, // diplayed time
     output [15:0] seg7s,    // 7 SEGMENTS
     output [7:0] leds       // LEDS
-    );
+);
     
-    mode12_24 instance_mode12_24 (
+    mode12_24 mode12_24_instance (
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
         .mod12_24(),        // 1 bit INPUT : 12h AM/PM or 24h mode
@@ -52,14 +52,14 @@ module display(
         .out_disp_time()    // 17 bits OUTPUT : time to display in setted format
     );
     
-     display_ctrl instance_disp_ctrl (
+     display_ctrl disp_ctrl_instance (
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
         .disp_time(),       // 17 bits INPUT : time to be displayed
         .deg7s              // 16 bits OUTPUT : 7 SEGMENTS
     );   
     
-    led_alarm instance_leds (
+    led_alarm leds_instance (
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
         .alarm(),           // 1 bit INPUT : alarm trigger

@@ -25,7 +25,7 @@
     reloj instance_name (
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
-        .mode(),            // 1 bit INPUT : alarm or clock modes
+        .mode(),            // 1 bit INPUT : clock (0) or alarm (1) modes
         .edit_btns(),       // 2 bits INPUT : hours and minutes edit buttons
         .alarm(),           // 1 bit OUTPUT : alarm trigger
         .disp_time()        // 17 bits OUTPUT : displayed time (alarm or clock)
@@ -37,39 +37,42 @@
 module reloj(
     input clk,              // clock
     input reset,            // reset
-    input mode,             // alarm or clock modes
+    input mode,             // clock (0) or alarm (1) modes
     input [1:0] edit_btns,  // hours and minutes edit buttons
     output alarm,           // alarm trigger
     output [16:0] disp_time // displayed time (alarm or clock)
+);
+    
+    logic [1:0] clock_btns_edges, alarm_btns_edges;
+    logic [16:0] current_time, alarm_time;
+    
+    watch watch_instance (
+        .clk(clk),             // 1 bit INPUT : clock
+        .reset(reset),           // 1 bit INPUT : reset
+        .edit_btns(clock_btns_edges),         // 2 bits INPUT : hours (msb) and minutes (lsb) edit buttons (edges)
+        .current_time(current_time)       // 17 bits OUTPUT : clock time in 24h format
     );
     
-    watch instance_watch (
-        .clk(),             // 1 bit INPUT : clock
-        .reset(),           // 1 bit INPUT : reset
-        .edit_btns,         // 2 bits INPUT : hours and minutes edit buttons
-        .current_time       // 17 bits OUTPUT : clock time in 24h format
+    clock_mode mode_instance (
+        .clk(clk),             // 1 bit INPUT : clock
+        .reset(reset),           // 1 bit INPUT : reset
+        .mode(mode),            // 1 bit INPUT : alarm or clock edit modes
+        .in_edit_btns(edit_btns),    // 2 bits INPUT : hours (msb) and minutes (lsb) edit buttons (debounced)
+        .current_time(current_time),    // 17 bits INPUT : current clock time
+        .alarm_time(alarm_time),      // 17 bits INPUT : setted alarm time
+        .clock_edit_btns(clock_btns_edges), // 2 bits OUTPUT : current time, hours (msb) and minutes (lsb) edit buttons (edges)
+        .alarm_edit_btns(alarm_btns_edges), // 2 bits OUTPUT : alarm time, hours (msb) and minutes (lsb) edit buttons (edges)
+        .display_time(disp_time) 
     );
     
-    clock_mode instance_mode (
-        .clk(),             // 1 bit INPUT : clock
-        .reset(),           // 1 bit INPUT : reset
-        .mode(),            // 1 bit INPUT : alarm or clock edit modes
-        .in_edit_btns(),    // 2 bits INPUT : hours and minutes edit buttons
-        .current_time(),    // 17 bits INPUT : current clock time
-        .alarm_time(),      // 17 bits INPUT : setted alarm time
-        .clock_edit_btns(), // 2 bits OUTPUT : current time, hours and minutes edit buttons 
-        .alarm_edit_btns(), // 2 bits OUTPUT : alarm time, hours and minutes edit buttons
-        .display_time 
-    );
-    
-    alarm instance_alarm (
-        .clk(),             // 1 bit INPUT : clock
-        .reset(),           // 1 bit INPUT : reset
-        .mode(),            // 1 bit INPUT : time or alarm edit modes
-        .edit_btns(),       // 2 bits INPUT : hours and minutes edit buttons
-        .current_time(),    // 17 bits INPUT : clock time for comparison
-        .alarm_time(),      // 17 bits OUTPUT : setted alarm time
-        .alarm              // 1 bit OUTPUT : alarm trigger
+    alarm alarm_instance (
+        .clk(clk),             // 1 bit INPUT : clock
+        .reset(reset),           // 1 bit INPUT : reset
+        .mode(mode),            // 1 bit INPUT : clock (0) or alarm (1) modes (alarm trigger enable)
+        .edit_btns(alarm_btns_edges),       // 2 bits INPUT : hours (msb) and minutes (lsb) edit buttons (edges)
+        .current_time(current_time),    // 17 bits INPUT : clock time for comparison
+        .alarm_time(alarm_time),      // 17 bits OUTPUT : setted alarm time
+        .alarm(alarm)              // 1 bit OUTPUT : alarm trigger
     );
         
 endmodule
