@@ -62,13 +62,22 @@ module alarm(
     end
         
     always_comb begin
-        // Edit alarm time
-        if ( edit_btns[1] == 1'b1 )                             // hours edit signal
-            next_time[10:6] = ( (a_time[10:6] + 1) % 60 );
+        // Edit alarm hour
+        if ( edit_btns[1] == 1'b1 ) begin                       // hours edit signal
+            if ( a_time[10:6] == 5'd23 )
+                next_time[10:6] = 5'b0;
+            else
+                next_time[10:6] = a_time[10:6] + 1;
+        end
         else
             next_time[10:6] = a_time[10:6];
-        if ( edit_btns[0] == 1'b1 )                             // minutes edit signal
-            next_time[5:0] = ( (a_time[5:0] +1) % 60 );
+        // Edit alarm minute
+        if ( edit_btns[0] == 1'b1 ) begin                       // minutes edit signal
+            if ( a_time[5:0] == 6'd59 )
+                next_time[5:0] = 5'b0;
+            else
+                next_time[5:0] = a_time[5:0] +1;
+        end
         else
             next_time[5:0] = a_time[5:0];
         // Alarm trigger

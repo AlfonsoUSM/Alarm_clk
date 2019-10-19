@@ -35,7 +35,7 @@ module topmodule(
     logic alarm_trigger;
     logis [15:0] seg7output;
     
-    assign seg7output[15:0] = { CA, CB, CC, CD, CE, CF, CG, DP, AN[7:0] };
+    //assign seg7output[15:0] = { CA, CB, CC, CD, CE, CF, CG, DP, AN[7:0] };
 
     debouncer #(.N(11)) debounce_right (// 2^(N-1) / clock_freq = debounce time
         .clk(CLK100MH),                 // 1 bit INPUT : clock
