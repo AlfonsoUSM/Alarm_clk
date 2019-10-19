@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: UTFSM (IPD432 Advanced Digital Systems Design 2019-2)
+// University: UTFSM (IPD432 Advanced Digital Systems Design 2019-2)
 // Engineer: Alfonso Cortes 
 // 
 // Create Date: 15.10.2019 19:51:38

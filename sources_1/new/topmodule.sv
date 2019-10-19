@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
-// Company: UTFSM (IPD432 Advanced Digital Systems Design 2019-2)
+// University: UTFSM (IPD432 Advanced Digital Systems Design 2019-2)
 // Engineer: Alfonso Cortes
 // 
 // Create Date: 15.10.2019 19:51:38
@@ -22,14 +22,14 @@
 
 module topmodule();
 
-    debouncer #(.N(11)) debounce_right ( 
+    debouncer #(.N(11)) debounce_right ( // 2^(N-1) / clock_freq = debounce time
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
         .in_btn(),          // 1 bit INPUT : in signal
         .out_btn()          // 1 bit OUTPUT : debounced signal
     );
     
-    debouncer #(.N(11)) debounce_left (
+    debouncer #(.N(11)) debounce_left ( // 2^(N-1) / clock_freq = debounce time
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
         .in_btn(),          // 1 bit INPUT : in signal
