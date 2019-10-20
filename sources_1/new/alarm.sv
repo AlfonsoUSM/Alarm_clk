@@ -41,7 +41,7 @@ module alarm(
     input [16:0] current_time,      // clock time for comparison    
     output [16:0] alarm_time,       // setted alarm time           
     output alarm                    // alarm trigger                 
-    );
+);
     
     
     logic [10:0] a_time, next_time;                 // alarm time regs (only hours and minutes)

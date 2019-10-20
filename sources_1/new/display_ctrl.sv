@@ -25,7 +25,7 @@
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
         .disp_time(),       // 17 bits INPUT : time to be displayed
-        .deg7s              // 16 bits OUTPUT : 7 SEGMENTS
+        .seg7s()            // 16 bits OUTPUT : 7 SEGMENTS
     );
 */
 ////////////////////////////////////////////
@@ -35,7 +35,7 @@ module display_ctrl(
     input reset,                  // reset
     input [16:0] disp_time,       // time to be displayed
     output [15:0] seg7s           // 7 SEGMENTS
-    );
+);
     
     logic [1:0][3:0] hours, minutes, seconds;
     logic [2:0] current_seg, next_seg;

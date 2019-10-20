@@ -43,28 +43,41 @@ module display(
     output [7:0] leds       // LEDS
 );
     
+    logic led0_mux;
+    logic out_led0, led_AM_PM;
+    logic [7:0] alarm_leds;
+    
+    assign leds[7:0] = { alarm_leds[7:1], out_led0 };
+    
+    always_comb begin
+        if ( led0_mux == 1'b1 )
+            out_led0 = alarm_leds[0];
+        else
+            out_led0 = led_AM_PM;  
+    end
+    
     mode12_24 mode12_24_instance (
-        .clk(),             // 1 bit INPUT : clock
-        .reset(),           // 1 bit INPUT : reset
-        .mod12_24(),        // 1 bit INPUT : 12h AM/PM or 24h mode
-        .in_disp_time(),    // 17 bits INPUT : time to display in 24h format
-        .led0(),            // 1 bit OUTPUT : led0 (AM/PM)
-        .out_disp_time()    // 17 bits OUTPUT : time to display in setted format
+        .clk(clk),                      // 1 bit INPUT : clock
+        .reset(reset),                  // 1 bit INPUT : reset
+        .mod12_24(mod12_24),            // 1 bit INPUT : 12h AM/PM or 24h mode
+        .in_disp_time(disp_time),       // 17 bits INPUT : time to display in 24h format
+        .led0(led_AM_PM),               // 1 bit OUTPUT : led0 (AM/PM)
+        .out_disp_time(out_disp_time)   // 17 bits OUTPUT : time to display in setted format
     );
     
      display_ctrl disp_ctrl_instance (
-        .clk(),             // 1 bit INPUT : clock
-        .reset(),           // 1 bit INPUT : reset
-        .disp_time(),       // 17 bits INPUT : time to be displayed
-        .deg7s              // 16 bits OUTPUT : 7 SEGMENTS
+        .clk(clk),                      // 1 bit INPUT : clock
+        .reset(reset),                  // 1 bit INPUT : reset
+        .disp_time(out_disp_time),      // 17 bits INPUT : time to be displayed
+        .seg7s(seg7s)                   // 16 bits OUTPUT : 7 SEGMENTS
     );   
     
     led_alarm leds_instance (
-        .clk(),             // 1 bit INPUT : clock
-        .reset(),           // 1 bit INPUT : reset
-        .alarm(),           // 1 bit INPUT : alarm trigger
-        .led0_mux(),        // 1 bit OUTPUT : led0 multiplexer control
-        .leds()             // 8 bits OUTPUT : leds (alarm)
+        .clk(clk),                      // 1 bit INPUT : clock
+        .reset(reset),                  // 1 bit INPUT : reset
+        .alarm(alarm),                  // 1 bit INPUT : alarm trigger
+        .led0_mux(led0_mux),            // 1 bit OUTPUT : led0 multiplexer control
+        .leds(alarm_leds)               // 8 bits OUTPUT : leds (alarm)
     );        
     
 endmodule

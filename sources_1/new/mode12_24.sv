@@ -39,5 +39,9 @@ module mode12_24(
     input [16:0] in_disp_time,      // time to display in 24h format
     output led0,                    // led0 (AM/PM)
     output [16:0] out_disp_time     // time to display in setted format
-    );
+);
+    
+    assign out_disp_time = in_disp_time;
+    assign led0 = 1'b0; 
+    
 endmodule
