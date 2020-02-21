@@ -24,67 +24,61 @@
     alarm instance_name (
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
-        .mode(),            // 1 bit INPUT : time or alarm edit modes
         .edit_btns(),       // 2 bits INPUT : hours (msb) and minutes (lsb) edit buttons (edges)
-        .current_time(),    // 17 bits INPUT : clock time for comparison
-        .alarm_time(),      // 17 bits OUTPUT : setted alarm time
-        .alarm()            // 1 bit OUTPUT : alarm trigger
+        .alarm_time()       // 20 bits OUTPUT : setted alarm time
     );
 */
 ////////////////////////////////////////////
 
 module alarm(
     input clk,                      // clock                          
-    input reset,                    // reset                          
-    input mode,                     // clock (0) or alarm (1) modes (alarm trigger enable)      
+    input reset,                    // reset                              
     input [1:0] edit_btns,          // hours (msb) and minutes (lsb) edit buttons (edges)
-    input [16:0] current_time,      // clock time for comparison    
-    output [16:0] alarm_time,       // setted alarm time           
-    output alarm                    // alarm trigger                 
+    output [19:0] alarm_time        // setted alarm time              
 );
     
     
-    logic [10:0] a_time, next_time;                 // alarm time regs (only hours and minutes)
-    logic alarm_trigger, next_trigger;
+    logic [12:0] a_time, next_time;                 // alarm time regs (only hours and minutes)
     
-    assign alarm_time = { a_time , 6'b0 };          // secs always 0
-    assign alarm = alarm_trigger;
+    assign alarm_time = { a_time , 5'b0 };          // secs always 0
     
     always_ff @( posedge clk ) begin
         if ( reset == 1'b1 ) begin
-            alarm_trigger <= 1'b0;
-            a_time <= 11'b0;
+            a_time <= 13'b0;
         end
         else begin
-            alarm_trigger <= next_trigger;
             a_time <= next_time;
         end
     end
         
     always_comb begin
         // Edit alarm hour
-        if ( edit_btns[1] == 1'b1 ) begin                       // hours edit signal
-            if ( a_time[10:6] == 5'd23 )
-                next_time[10:6] = 5'b0;
-            else
-                next_time[10:6] = a_time[10:6] + 1;
+        if ( edit_btns[1] == 1'b1 ) begin                           // hours edit signal
+            if ( a_time[12:7] == {2'd2, 4'd3} )                     // hour == 23
+                next_time[12:7] = 6'd0;
+            else begin
+                if ( a_time[10:7] == 4'd9 ) begin                   // hour == x9
+                    next_time[12:7] = {a_time[12:11] + 1, 4'd0};
+                end
+                else
+                    next_time[12:7] = {a_time[12:11], a_time[10:7] + 1};
+            end
         end
         else
-            next_time[10:6] = a_time[10:6];
+            next_time[12:7] = a_time[12:7];
         // Edit alarm minute
         if ( edit_btns[0] == 1'b1 ) begin                       // minutes edit signal
-            if ( a_time[5:0] == 6'd59 )
-                next_time[5:0] = 5'b0;
-            else
-                next_time[5:0] = a_time[5:0] +1;
+            if ( a_time[6:0] == {3'd5, 4'd9} )                  // minutes == 59
+                next_time[6:0] = 7'b0;
+            else begin
+                if ( a_time[3:0] == 4'd9 )                      // minutes == x9
+                    next_time[6:0] = {a_time[6:4] + 1, 4'd0};
+                else
+                    next_time[6:0] = {a_time[6:4], a_time[3:0] + 1};
+            end
         end
         else
-            next_time[5:0] = a_time[5:0];
-        // Alarm trigger
-        if ( alarm_time == current_time && mode == 1'b0 )       // trigger only on clock mode
-            next_trigger = 1'b1;
-        else
-            next_trigger = 1'b0;        
+            next_time[6:0] = a_time[6:0]; 
     end
     
 endmodule

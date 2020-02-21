@@ -24,7 +24,7 @@
     display_ctrl instance_name (
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
-        .disp_time(),       // 17 bits INPUT : time to be displayed
+        .disp_time(),       // 20 bits INPUT : time to be displayed
         .seg7s()            // 16 bits OUTPUT : 7 SEGMENTS
     );
 */
@@ -33,7 +33,7 @@
 module display_ctrl(
     input clk,                    // clock
     input reset,                  // reset
-    input [16:0] disp_time,       // time to be displayed
+    input [19:0] disp_time,       // time to be displayed
     output [15:0] seg7s           // 7 SEGMENTS
 );
     
@@ -45,7 +45,14 @@ module display_ctrl(
     logic DP;
     logic [3:0] digit;
     
-    //assign seg7s[15:0] = { cathodes[6:0] , DP, anodes[7:0] };
+    assign DP = 1'b0;
+    assign seg7s[15:0] = { cathodes[6:0] , DP, anodes[7:0] };
+    assign hours[1] = {2'b00, disp_time[19:18]};
+    assign hours[0] = {1'b0, disp_time[17:14]};
+    assign minutes[1] = {1'b0, disp_time[13:11]};
+    assign minutes[0] = disp_time[10:7];
+    assign seconds[1] = {1'b0, disp_time[6:4]};
+    assign seconds[0] = disp_time[3:0];
     
     always_ff @( posedge clk ) begin
         if ( reset == 1'b1 )   

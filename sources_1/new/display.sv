@@ -38,12 +38,13 @@ module display(
     input reset,            // reset
     input mod12_24,         // display mode, 12h AM/PM or 24h
     input alarm,            // alarm trigger
-    input [16:0] disp_time, // diplayed time
+    input [19:0] disp_time, // diplayed time
     output [15:0] seg7s,    // 7 SEGMENTS
     output [7:0] leds       // LEDS
 );
     
     logic led0_mux;
+    logic [19:0] out_disp_time;
     logic out_led0, led_AM_PM;
     logic [7:0] alarm_leds;
     
@@ -60,15 +61,15 @@ module display(
         .clk(clk),                      // 1 bit INPUT : clock
         .reset(reset),                  // 1 bit INPUT : reset
         .mod12_24(mod12_24),            // 1 bit INPUT : 12h AM/PM or 24h mode
-        .in_disp_time(disp_time),       // 17 bits INPUT : time to display in 24h format
+        .in_disp_time(disp_time[19:0]),       // 20 bits INPUT : time to display in 24h format
         .led0(led_AM_PM),               // 1 bit OUTPUT : led0 (AM/PM)
-        .out_disp_time(out_disp_time)   // 17 bits OUTPUT : time to display in setted format
+        .out_disp_time(out_disp_time[19:0])   // 20 bits OUTPUT : time to display in setted format
     );
     
      display_ctrl disp_ctrl_instance (
         .clk(clk),                      // 1 bit INPUT : clock
         .reset(reset),                  // 1 bit INPUT : reset
-        .disp_time(out_disp_time),      // 17 bits INPUT : time to be displayed
+        .disp_time(out_disp_time[19:0]),      // 20 bits INPUT : time to be displayed
         .seg7s(seg7s)                   // 16 bits OUTPUT : 7 SEGMENTS
     );   
     

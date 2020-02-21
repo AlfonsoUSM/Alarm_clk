@@ -25,9 +25,9 @@
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
         .mod12_24(),        // 1 bit INPUT : 12h AM/PM or 24h mode
-        .in_disp_time(),    // 17 bits INPUT : time to display in 24h format
+        .in_disp_time(),    // 20 bits INPUT : time to display in 24h format
         .led0(),            // 1 bit OUTPUT : led0 (AM/PM)
-        .out_disp_time()    // 17 bits OUTPUT : time to display in setted format
+        .out_disp_time()    // 20 bits OUTPUT : time to display in setted format
     );
 */
 ////////////////////////////////////////////
@@ -36,12 +36,12 @@ module mode12_24(
     input clk,                      // clock
     input reset,                    // reset
     input mod12_24,                 // 12h AM/PM or 24h mode
-    input [16:0] in_disp_time,      // time to display in 24h format
+    input [19:0] in_disp_time,      // time to display in 24h format
     output led0,                    // led0 (AM/PM)
-    output [16:0] out_disp_time     // time to display in setted format
+    output [19:0] out_disp_time     // time to display in setted format
 );
     
-    assign out_disp_time = in_disp_time;
+    assign out_disp_time[19:0] = in_disp_time[19:0];
     assign led0 = 1'b0; 
     
 endmodule

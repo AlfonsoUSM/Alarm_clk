@@ -23,19 +23,20 @@
 module topmodule(
     input CLK100MH,
     input CPU_RESETN,
-    input SW[1:0],
+    input [1:0]SW,
     input BTNL, BTNR,
     output CA, CB, CC, CD, CE, CF, CG, DP,
-    output AN[7:0],
-    output LED[7:0]
+    output [7:0]AN,
+    output [7:0]LED
 );
     
     logic debouced_left, debounced_right;
-    logic [16:0] disp_time;
+    logic [19:0] disp_time;
     logic alarm_trigger;
-    logis [15:0] seg7output;
+    logic [15:0] seg7output;
     
-    //assign seg7output[15:0] = { CA, CB, CC, CD, CE, CF, CG, DP, AN[7:0] };
+    assign { CA, CB, CC, CD, CE, CF, CG, DP } =  seg7output[15:8];
+    assign AN[7:0] = seg7output[7:0];
 
     debouncer #(.N(11)) debounce_right (// 2^(N-1) / clock_freq = debounce time
         .clk(CLK100MH),                 // 1 bit INPUT : clock
@@ -56,8 +57,8 @@ module topmodule(
         .reset(~CPU_RESETN),            // 1 bit INPUT : reset
         .mode(SW[1]),                   // 1 bit INPUT : clock (0) or alarm (1) modes
         .edit_btns({debouced_left, debounced_right}),       // 2 bits INPUT : hours (msb) and minutes (lsb) edit buttons (debounced)
-        .alarm(alarm_trigger),          // 1 bit OUTPUT : alarm trigger
-        .disp_time(disp_time)           // 17 bits OUTPUT : displayed time (alarm or clock)
+        .alarm(alarm_trigger),          // 1s bit OUTPUT : alarm trigger
+        .disp_time(disp_time)           // 20 bits OUTPUT : displayed time (alarm or clock)
     );
 
     display display_instance (
@@ -65,8 +66,8 @@ module topmodule(
         .reset(~CPU_RESETN),            // 1 bit INPUT : reset
         .mod12_24(SW[0]),               // 1 bit INPUT : display mode, 12h AM/PM or 24h
         .alarm(alarm_trigger),          // 1 bit INPUT : alarm trigger
-        .disp_time(disp_time),          // 17 bits INPUT : diplayed time
-        .seg7s(seg7output[15:0]),           // 16 bits OUTPUT : 7 SEGMENTS 
+        .disp_time(disp_time),          // 20 bits INPUT : diplayed time
+        .seg7s(seg7output[15:0]),       // 16 bits OUTPUT : 7 SEGMENTS 
         .leds(LED[7:0])                 // 8 bits OUTPUT : LEDS
     );
     
