@@ -1,5 +1,18 @@
 `timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 23.02.2020 16:49:36
+// Design Name: 
+// Module Name: posedge_detector
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
 // University: UTFSM (IPD432 Advanced Digital Systems Design 2019-2)
 // Engineer: Alfonso Cortes 
 // 
@@ -21,7 +34,7 @@
 
 ////////    Instance template   /////////////
 /* 
-    posedge_detector #(.N(11)) instance_name ( // 2^(N-1)/clock_freq = hold time for continuous pressing 
+    posedge_detector instance_name ( //  
         .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
         .in_signal(),       // 1 bit INPUT : input signal
@@ -30,8 +43,7 @@
 */
 ////////////////////////////////////////////
 
-// After being pressed 2^(N-1)/clock_freq secs, a new posedge is generated every 2^(N-2) cycles
-module posedge_detector #(parameter N = 11)( // 2^(N-1)/clock_freq = hold time for continuous pressing 
+module posedge_detector ( 
     input clk,
     input reset,
     input in_signal,
@@ -41,8 +53,8 @@ module posedge_detector #(parameter N = 11)( // 2^(N-1)/clock_freq = hold time f
     logic DFF1, DFF2;
     logic in_edge;
     
-    assign in_edge = (DFF1 ^ DFF2) ;
-    assign signal_edges = in_edge; // falta agregar 
+    assign in_edge = (DFF1 & ~DFF2) ; // (DFF1 ^ DFF2)
+    assign signal_edges = in_edge; 
     
     always_ff @(posedge clk) begin
         if ( reset == 1'b1) begin

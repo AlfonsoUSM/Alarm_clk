@@ -38,90 +38,69 @@ module display_ctrl(
 );
     
     logic [1:0][3:0] hours, minutes, seconds;
-    logic [2:0] current_seg, next_seg;
-    logic [5:0] segs;
-    logic [7:0] anodes;
+    logic [5:0] anode, next_anode;
     logic [6:0] cathodes;           // without DP, active low
     logic DP;
     logic [3:0] digit;
+    logic sec_clk;
     
-    assign DP = 1'b0;
-    assign seg7s[15:0] = { cathodes[6:0] , DP, anodes[7:0] };
+    assign seg7s[15:0] = { cathodes[6:0], DP , anode[5:0], 2'b11 };
     assign hours[1] = {2'b00, disp_time[19:18]};
-    assign hours[0] = {1'b0, disp_time[17:14]};
+    assign hours[0] = {disp_time[17:14]};
     assign minutes[1] = {1'b0, disp_time[13:11]};
     assign minutes[0] = disp_time[10:7];
     assign seconds[1] = {1'b0, disp_time[6:4]};
     assign seconds[0] = disp_time[3:0];
     
-    always_ff @( posedge clk ) begin
+    always_ff @( posedge sec_clk ) begin
         if ( reset == 1'b1 )   
-            current_seg[2:0] <= 3'b0;
+            anode[5:0] <= 6'b111110;
         else
-            current_seg[2:0] <= next_seg[2:0];
+            anode[5:0] <= next_anode[5:0];
     end
     
     always_comb begin
-        case ( current_seg[2:0] )           // actives the right anode and chooses the correspondant digit
-            3'b000: begin
+        next_anode[5:0] = {anode[4:0], anode[5]};
+        case ( anode[5:0] )           // actives the right anode and chooses the correspondant digit
+            6'b111110: begin
                 digit = seconds[0];
-                anodes[7:0] = 8'b11111110;
+                DP = 1'b1;
             end
-            3'b001: begin
+            6'b111101: begin
                 digit = seconds[1];
-                anodes[7:0] = 8'b11111101;
+                DP = 1'b1;
             end 
-            3'b010: begin
+            6'b111011: begin
                 digit = minutes[0];
-                anodes[7:0] = 8'b11111011;
+                DP = 1'b0;
             end
-            3'b011: begin
+            6'b110111: begin
                 digit = minutes[1];
-                anodes[7:0] = 8'b11110111;
+                DP = 1'b1;
             end
-            3'b100: begin
+            6'b101111: begin
                 digit = hours[0];
-                anodes[7:0] = 8'b11101111;
+                DP = 1'b1;
             end
-            3'b101: begin
+            6'b011111: begin
                 digit = hours[1];
-                anodes[7:0] = 8'b11011111;
+                DP = 1'b1;
             end
             default: begin
                 digit = 4'b1111;
-                anodes[7:0] = 8'b01111111;
+                DP = 1'b0;
             end
         endcase
-        if ( current_seg[2:0] == 3'b101 )
-            next_seg[2:0] = 3'b0;
-        else
-            next_seg[2:0] = current_seg[2:0] + 1;
     end    
     
-    always_comb begin
-        case (digit[3:0])
-            4'd0:
-                cathodes = 7'b0000001;
-            4'd1:        
-                cathodes = 7'b1001111;
-            4'd2:       
-                cathodes = 7'b0010010;
-            4'd3:        
-                cathodes = 7'b0000110;
-            4'd4:        
-                cathodes = 7'b1001100;
-            4'd5:        
-                cathodes = 7'b0100100;
-            4'd6:        
-                cathodes = 7'b0100000;
-            4'd7:        
-                cathodes = 7'b0001111;
-            4'd8:        
-                cathodes = 7'b0000000;
-            4'd9:        
-                cathodes = 7'b0000100;
-            default :
-                cathodes = 7'b1111110; // -
-        endcase
-    end
+    segment7 bcd_to_7seg(
+        .bcd(digit[3:0]),
+        .seg(cathodes[6:0])
+    );
+    
+    clock_divider #(.d (10000)) seg7freq ( 
+        .clk_in(clk),
+        .reset(reset),
+        .clk_out(sec_clk)
+    );
 endmodule

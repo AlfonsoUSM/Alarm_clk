@@ -40,11 +40,11 @@ module alarm(
     
     logic [12:0] a_time, next_time;                 // alarm time regs (only hours and minutes)
     
-    assign alarm_time = { a_time , 5'b0 };          // secs always 0
+    assign alarm_time = { a_time , 7'b0 };          // secs always 0
     
     always_ff @( posedge clk ) begin
         if ( reset == 1'b1 ) begin
-            a_time <= 13'b0;
+            a_time <= 13'd1 ;
         end
         else begin
             a_time <= next_time;
@@ -52,33 +52,32 @@ module alarm(
     end
         
     always_comb begin
-        // Edit alarm hour
-        if ( edit_btns[1] == 1'b1 ) begin                           // hours edit signal
+        if (edit_btns[1] == 1'b1) begin
+            // Edit alarm hour
             if ( a_time[12:7] == {2'd2, 4'd3} )                     // hour == 23
                 next_time[12:7] = 6'd0;
             else begin
-                if ( a_time[10:7] == 4'd9 ) begin                   // hour == x9
-                    next_time[12:7] = {a_time[12:11] + 1, 4'd0};
-                end
+                if ( a_time[10:7] == 4'd9 )                         // hour == x9
+                    next_time[12:7] = {a_time[12:11] + 2'd1, 4'd0};
                 else
-                    next_time[12:7] = {a_time[12:11], a_time[10:7] + 1};
+                    next_time[12:7] = {a_time[12:11], a_time[10:7] + 4'd1};
             end
         end
-        else
+        else 
             next_time[12:7] = a_time[12:7];
-        // Edit alarm minute
-        if ( edit_btns[0] == 1'b1 ) begin                       // minutes edit signal
+        if (edit_btns[0] == 1'b1) begin
+            // Edit alarm minute                     // minutes edit signal
             if ( a_time[6:0] == {3'd5, 4'd9} )                  // minutes == 59
                 next_time[6:0] = 7'b0;
             else begin
                 if ( a_time[3:0] == 4'd9 )                      // minutes == x9
-                    next_time[6:0] = {a_time[6:4] + 1, 4'd0};
+                    next_time[6:0] = {a_time[6:4] + 3'd1, 4'd0};
                 else
-                    next_time[6:0] = {a_time[6:4], a_time[3:0] + 1};
+                    next_time[6:0] = {a_time[6:4], a_time[3:0] + 4'd1};
             end
         end
         else
-            next_time[6:0] = a_time[6:0]; 
+            next_time[6:0] = a_time[6:0];
     end
     
 endmodule

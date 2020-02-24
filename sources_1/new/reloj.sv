@@ -72,5 +72,5 @@ module reloj(
         .edit_btns(alarm_btns_edges),       // 2 bits INPUT : hours (msb) and minutes (lsb) edit buttons (edges)
         .alarm_time(alarm_time)      // 20 bits OUTPUT : setted alarm time
     );
-        
+     
 endmodule

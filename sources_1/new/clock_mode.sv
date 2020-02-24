@@ -84,14 +84,14 @@ module clock_mode(
             next_trigger = 1'b0;       
     end
     
-    posedge_detector #(.N(11)) posedge_detector_left ( // 2^(N-1)/clock_freq = hold time for continuous pressing 
+    posedge_detector posedge_detector_left ( 
         .clk(clk),             // 1 bit INPUT : clock
         .reset(reset),           // 1 bit INPUT : reset
         .in_signal(in_edit_btns[1]),       // 1 bit INPUT : input signal
         .signal_edges(edit_btns_edges[1])     // 1 bit OUTPUT : signal posedges 
     );
 
-    posedge_detector #(.N(11)) posedge_detector_right ( // 2^(N-1)/clock_freq = hold time for continuous pressing 
+    posedge_detector posedge_detector_right ( 
         .clk(clk),             // 1 bit INPUT : clock
         .reset(reset),           // 1 bit INPUT : reset
         .in_signal(in_edit_btns[0]),       // 1 bit INPUT : input signal

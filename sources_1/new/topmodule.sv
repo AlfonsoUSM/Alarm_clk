@@ -21,7 +21,7 @@
 
 
 module topmodule(
-    input CLK100MH,
+    input CLK100MHZ,
     input CPU_RESETN,
     input [1:0]SW,
     input BTNL, BTNR,
@@ -39,21 +39,21 @@ module topmodule(
     assign AN[7:0] = seg7output[7:0];
 
     debouncer #(.N(11)) debounce_right (// 2^(N-1) / clock_freq = debounce time
-        .clk(CLK100MH),                 // 1 bit INPUT : clock
+        .clk(CLK100MHZ),                 // 1 bit INPUT : clock
         .reset(~CPU_RESETN),            // 1 bit INPUT : reset
         .in_btn(BTNR),                  // 1 bit INPUT : in signal
         .out_btn(debounced_right)       // 1 bit OUTPUT : debounced signal
     );
     
     debouncer #(.N(11)) debounce_left ( // 2^(N-1) / clock_freq = debounce time
-        .clk(CLK100MH),                 // 1 bit INPUT : clock
+        .clk(CLK100MHZ),                 // 1 bit INPUT : clock
         .reset(~CPU_RESETN),            // 1 bit INPUT : reset
         .in_btn(BTNL),                  // 1 bit INPUT : in signal
         .out_btn(debouced_left)         // 1 bit OUTPUT : debounced signal
     );
 
     reloj reloj_instance (
-        .clk(CLK100MH),                 // 1 bit INPUT : clock
+        .clk(CLK100MHZ),                 // 1 bit INPUT : clock
         .reset(~CPU_RESETN),            // 1 bit INPUT : reset
         .mode(SW[1]),                   // 1 bit INPUT : clock (0) or alarm (1) modes
         .edit_btns({debouced_left, debounced_right}),       // 2 bits INPUT : hours (msb) and minutes (lsb) edit buttons (debounced)
@@ -62,7 +62,7 @@ module topmodule(
     );
 
     display display_instance (
-        .clk(CLK100MH),                 // 1 bit INPUT : clock
+        .clk(CLK100MHZ),                 // 1 bit INPUT : clock
         .reset(~CPU_RESETN),            // 1 bit INPUT : reset
         .mod12_24(SW[0]),               // 1 bit INPUT : display mode, 12h AM/PM or 24h
         .alarm(alarm_trigger),          // 1 bit INPUT : alarm trigger

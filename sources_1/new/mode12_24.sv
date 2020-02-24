@@ -22,7 +22,6 @@
 ////////    Instance template   /////////////
 /* 
     mode12_24 instance_name (
-        .clk(),             // 1 bit INPUT : clock
         .reset(),           // 1 bit INPUT : reset
         .mod12_24(),        // 1 bit INPUT : 12h AM/PM or 24h mode
         .in_disp_time(),    // 20 bits INPUT : time to display in 24h format
@@ -33,7 +32,6 @@
 ////////////////////////////////////////////
 
 module mode12_24(
-    input clk,                      // clock
     input reset,                    // reset
     input mod12_24,                 // 12h AM/PM or 24h mode
     input [19:0] in_disp_time,      // time to display in 24h format
@@ -41,7 +39,68 @@ module mode12_24(
     output [19:0] out_disp_time     // time to display in setted format
 );
     
-    assign out_disp_time[19:0] = in_disp_time[19:0];
-    assign led0 = 1'b0; 
+    logic [5:0] hour12_24;
+    logic pm;
+    assign out_disp_time[19:0] = {hour12_24[5:0] , in_disp_time[13:0]};
+    assign led0 = pm;
+    
+    always_comb begin
+        if (mod12_24 == 1'b1) begin
+            case (in_disp_time[19:14])
+                {2'd2, 4'd3}: begin
+                    hour12_24[5:0] = {2'd1, 4'd1};
+                    pm = 1'd1;
+                end
+                {2'd2, 4'd2}: begin
+                    hour12_24[5:0] = {2'd1, 4'd0};
+                    pm = 1'd1;
+                end
+                {2'd2, 4'd1}: begin
+                    hour12_24[5:0] = {2'd0, 4'd9};
+                    pm = 1'd1;
+                end
+                {2'd2, 4'd0}: begin
+                    hour12_24[5:0] = {2'd0, 4'd8};
+                    pm = 1'd1;
+                end
+                {2'd1, 4'd9}: begin
+                    hour12_24[5:0] = {2'd0, 4'd7};
+                    pm = 1'd1;
+                end
+                {2'd1, 4'd8}: begin
+                    hour12_24[5:0] = {2'd0, 4'd6};
+                    pm = 1'd1;
+                end
+                {2'd1, 4'd7}: begin
+                    hour12_24[5:0] = {2'd0, 4'd5};
+                    pm = 1'd1;
+                end
+                {2'd1, 4'd6}: begin
+                    hour12_24[5:0] = {2'd0, 4'd4};
+                    pm = 1'd1;
+                end
+                {2'd1, 4'd5}: begin
+                    hour12_24[5:0] = {2'd0, 4'd3};
+                    pm = 1'd1;
+                end
+                {2'd1, 4'd4}: begin
+                    hour12_24[5:0] = {2'd0, 4'd2};
+                    pm = 1'd1;
+                end
+                {2'd1, 4'd3}: begin
+                    hour12_24[5:0] = {2'd0, 4'd1};
+                    pm = 1'd1;
+                end
+                default: begin
+                    hour12_24[5:0] = in_disp_time[19:14];
+                    pm = 1'b0;
+                 end
+            endcase
+        end
+        else begin
+            hour12_24[5:0] = in_disp_time[19:14];
+            pm = 1'b0;
+        end
+    end 
     
 endmodule

@@ -58,7 +58,6 @@ module display(
     end
     
     mode12_24 mode12_24_instance (
-        .clk(clk),                      // 1 bit INPUT : clock
         .reset(reset),                  // 1 bit INPUT : reset
         .mod12_24(mod12_24),            // 1 bit INPUT : 12h AM/PM or 24h mode
         .in_disp_time(disp_time[19:0]),       // 20 bits INPUT : time to display in 24h format
@@ -79,6 +78,6 @@ module display(
         .alarm(alarm),                  // 1 bit INPUT : alarm trigger
         .led0_mux(led0_mux),            // 1 bit OUTPUT : led0 multiplexer control
         .leds(alarm_leds)               // 8 bits OUTPUT : leds (alarm)
-    );        
-    
+    );    
+
 endmodule
