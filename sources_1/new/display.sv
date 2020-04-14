@@ -58,7 +58,6 @@ module display(
     end
     
     mode12_24 mode12_24_instance (
-        .reset(reset),                  // 1 bit INPUT : reset
         .mod12_24(mod12_24),            // 1 bit INPUT : 12h AM/PM or 24h mode
         .in_disp_time(disp_time[19:0]),       // 20 bits INPUT : time to display in 24h format
         .led0(led_AM_PM),               // 1 bit OUTPUT : led0 (AM/PM)

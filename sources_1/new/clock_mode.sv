@@ -84,18 +84,31 @@ module clock_mode(
             next_trigger = 1'b0;       
     end
     
-    posedge_detector posedge_detector_left ( 
-        .clk(clk),             // 1 bit INPUT : clock
-        .reset(reset),           // 1 bit INPUT : reset
-        .in_signal(in_edit_btns[1]),       // 1 bit INPUT : input signal
-        .signal_edges(edit_btns_edges[1])     // 1 bit OUTPUT : signal posedges 
-    );
+//    posedge_detector posedge_detector_left ( 
+//        .clk(clk),             // 1 bit INPUT : clock
+//        .reset(reset),           // 1 bit INPUT : reset
+//        .in_signal(in_edit_btns[1]),       // 1 bit INPUT : input signal
+//        .signal_edges(/*edit_btns_edges[1]*/)     // 1 bit OUTPUT : signal posedges 
+//    );
 
-    posedge_detector posedge_detector_right ( 
-        .clk(clk),             // 1 bit INPUT : clock
-        .reset(reset),           // 1 bit INPUT : reset
-        .in_signal(in_edit_btns[0]),       // 1 bit INPUT : input signal
-        .signal_edges(edit_btns_edges[0])     // 1 bit OUTPUT : signal posedges 
+//    posedge_detector posedge_detector_right ( 
+//        .clk(clk),             // 1 bit INPUT : clock
+//        .reset(reset),           // 1 bit INPUT : reset
+//        .in_signal(in_edit_btns[0]),       // 1 bit INPUT : input signal
+//        .signal_edges(/*edit_btns_edges[0]*/)     // 1 bit OUTPUT : signal posedges 
+//    );
+    
+    multiple_edge_detector left (
+        .clk(clk),         // 1 bit Input: clock signal
+        .reset(reset),       // 1 bit Input: CPU reset signal
+        .in_signal(in_edit_btns[1]),   // 1 bit Input: input signal
+        .out_signal(edit_btns_edges[1])   // 1 bit Output: output pulses
     );
-            
+    
+    multiple_edge_detector right (
+        .clk(clk),         // 1 bit Input: clock signal
+        .reset(reset),       // 1 bit Input: CPU reset signal
+        .in_signal(in_edit_btns[0]),   // 1 bit Input: input signal
+        .out_signal(edit_btns_edges[0])   // 1 bit Output: output pulses
+    );        
 endmodule

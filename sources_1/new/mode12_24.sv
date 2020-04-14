@@ -22,7 +22,6 @@
 ////////    Instance template   /////////////
 /* 
     mode12_24 instance_name (
-        .reset(),           // 1 bit INPUT : reset
         .mod12_24(),        // 1 bit INPUT : 12h AM/PM or 24h mode
         .in_disp_time(),    // 20 bits INPUT : time to display in 24h format
         .led0(),            // 1 bit OUTPUT : led0 (AM/PM)
@@ -32,7 +31,6 @@
 ////////////////////////////////////////////
 
 module mode12_24(
-    input reset,                    // reset
     input mod12_24,                 // 12h AM/PM or 24h mode
     input [19:0] in_disp_time,      // time to display in 24h format
     output led0,                    // led0 (AM/PM)
